@@ -1,6 +1,6 @@
 package com.donkeigy.coach.app;
 
-import com.donkeigy.coach.ui.MainForm;
+import com.donkeigy.coach.ui.forms.MainForm;
 import com.yahoo.objects.api.YahooApiInfo;
 import com.yahoo.objects.league.League;
 import com.yahoo.objects.league.LeagueSettings;

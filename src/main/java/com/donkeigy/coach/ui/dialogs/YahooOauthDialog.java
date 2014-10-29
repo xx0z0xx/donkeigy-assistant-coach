@@ -2,7 +2,7 @@ package com.donkeigy.coach.ui.dialogs;
 
 
 
-import com.donkeigy.coach.ui.MainForm;
+import com.donkeigy.coach.ui.forms.MainForm;
 import com.yahoo.utils.oauth.OAuthConnection;
 
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package com.donkeigy.coach.ui;
+package com.donkeigy.coach.ui.forms;
 
 import com.donkeigy.coach.ui.dialogs.YahooOauthDialog;
 import com.donkeigy.coach.ui.panels.LeaguePanel;
