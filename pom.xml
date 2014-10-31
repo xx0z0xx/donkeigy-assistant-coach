@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <repositories>
         <repository>
-            <id>YOUR-PROJECT-NAME-mvn-repo</id>
-            <url>https://raw.github.com/YOUR-USERNAME/YOUR-PROJECT-NAME/mvn-repo/</url>
+            <id>yahoo-api-mvn-repo</id>
+            <url>https://raw.github.com/cjcharles777/Yahoo-Fantasy-Football-API-Library/mvn-repo/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>

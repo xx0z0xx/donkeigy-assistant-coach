@@ -22,7 +22,7 @@ public class TeamCompareDialog extends JDialog {
     {
         this.teams = teams;
         this.teamStatMap = teamStatMap;
-        teamComparePanel1 = new TeamComparePanel(teams, teamStatMap);
+        teamComparePanel1.init(teams, teamStatMap);
 
         setContentPane(contentPane);
         setModal(true);

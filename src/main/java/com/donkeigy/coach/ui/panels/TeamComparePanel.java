@@ -55,21 +55,21 @@ public class TeamComparePanel extends JPanel
             {
                 TeamPoints teamPoints= teamStat.getTeam_points();
                 BigDecimal pointsValue = new BigDecimal(teamPoints.getTotal());
-                dataset.addValue(pointsValue, teamPoints.getWeek(), team.getName());
+                dataset.addValue(pointsValue,team.getName() , teamPoints.getWeek());
             }
         }
         return dataset;
     }
 
-    private void init (List<Team> teams, Map<String, List<TeamStat>> teamStatMap)
+    public void init (List<Team> teams, Map<String, List<TeamStat>> teamStatMap)
     {
         chart = ChartFactory.createLineChart(
                 "League Comparison", // chart title
-                "Release", // domain axis label
-                "Week", // range axis label
+                "Week", // domain axis label
+                "Points", // range axis label
                 createTeamCompareDataSet(teams,teamStatMap), // data
                 PlotOrientation.VERTICAL, // orientation
-                false, // include legend
+                true, // include legend
                 true, // tooltips
                 false // urls
         );
