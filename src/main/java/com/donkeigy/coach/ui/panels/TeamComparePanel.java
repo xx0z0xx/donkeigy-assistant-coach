@@ -30,12 +30,10 @@ public class TeamComparePanel extends JPanel
     private List<Team> teams;
     private Map<String, List<TeamStat>> teamStatMap;
 
-    public TeamComparePanel(List<Team> teams, Map<String, List<TeamStat>> teamStatMap)
+    public TeamComparePanel()
     {
         super();
-        this.teams = teams;
-        this.teamStatMap = teamStatMap;
-        init(teams, teamStatMap);
+
     }
 
     private void createUIComponents()
@@ -45,7 +43,7 @@ public class TeamComparePanel extends JPanel
 
     }
 
-    private CategoryDataset createTeamCompareDataSet(List<Team> teams, Map<String, List<TeamStat>> teamStatMap)
+    private CategoryDataset createTeamCompareDataSet(List<Team> teams, Map<String, List<TeamStat>> teamStatMap, int currentWeek)
     {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for(Team team : teams)
@@ -53,21 +51,24 @@ public class TeamComparePanel extends JPanel
             List<TeamStat> teamStats = teamStatMap.get(team.getTeam_key());
             for(TeamStat teamStat : teamStats)
             {
-                TeamPoints teamPoints= teamStat.getTeam_points();
-                BigDecimal pointsValue = new BigDecimal(teamPoints.getTotal());
-                dataset.addValue(pointsValue,team.getName() , teamPoints.getWeek());
+                if(Integer.parseInt(teamStat.getTeam_points().getWeek()) < currentWeek ) // remove the non played weeks
+                {
+                    TeamPoints teamPoints = teamStat.getTeam_points();
+                    BigDecimal pointsValue = new BigDecimal(teamPoints.getTotal());
+                    dataset.addValue(pointsValue, team.getName(), teamPoints.getWeek());
+                }
             }
         }
         return dataset;
     }
 
-    public void init (List<Team> teams, Map<String, List<TeamStat>> teamStatMap)
+    public void init (List<Team> teams, Map<String, List<TeamStat>> teamStatMap, int currentWeek)
     {
         chart = ChartFactory.createLineChart(
                 "League Comparison", // chart title
                 "Week", // domain axis label
                 "Points", // range axis label
-                createTeamCompareDataSet(teams,teamStatMap), // data
+                createTeamCompareDataSet(teams,teamStatMap, currentWeek), // data
                 PlotOrientation.VERTICAL, // orientation
                 true, // include legend
                 true, // tooltips

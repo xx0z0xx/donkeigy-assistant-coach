@@ -18,11 +18,11 @@ public class TeamCompareDialog extends JDialog {
     private TeamComparePanel teamComparePanel1;
     private Map<String, List<TeamStat>> teamStatMap = new HashMap<String, List<TeamStat>>();
     private List<Team> teams = new LinkedList<Team>();
-    public TeamCompareDialog(List<Team> teams, Map<String, List<TeamStat>> teamStatMap)
+    public TeamCompareDialog(List<Team> teams, Map<String, List<TeamStat>> teamStatMap, int currentWeek)
     {
         this.teams = teams;
         this.teamStatMap = teamStatMap;
-        teamComparePanel1.init(teams, teamStatMap);
+        teamComparePanel1.init(teams, teamStatMap, currentWeek);
 
         setContentPane(contentPane);
         setModal(true);
@@ -69,6 +69,6 @@ public class TeamCompareDialog extends JDialog {
 
 
     private void createUIComponents() {
-       teamComparePanel1 = new TeamComparePanel(new LinkedList<Team>(), new HashMap<String, List<TeamStat>>());
+       teamComparePanel1 = new TeamComparePanel();
     }
 }

@@ -33,6 +33,7 @@ public class LeaguePanel extends JPanel {
     LeagueService leagueService;
     TeamService teamService;
     LeagueTeamsTableModel leagueTeamsTableModel;
+    private League selectedLeague;
     Map<String, TeamStandings> teamStandingsMap = new HashMap<String, TeamStandings>();
     List<Team> leagueTeams = new LinkedList<Team>();
 
@@ -60,7 +61,7 @@ public class LeaguePanel extends JPanel {
 
     private void populateLeagueTeamTable()
     {
-        League selectedLeague = (League)leagueComboBox.getSelectedItem();
+        selectedLeague = (League)leagueComboBox.getSelectedItem();
         List<Team> selectedLeagueTeams = teamService.getLeagueTeams(selectedLeague.getLeague_key());
         Map<String, TeamStandings> selectedStandingsMap = leagueService.getLeagueStandings(selectedLeague.getLeague_key());
         leagueTeams.clear();
@@ -95,7 +96,7 @@ public class LeaguePanel extends JPanel {
             teamStatMap.put(team.getTeam_key(), teamWeeklyStats);
         }
 
-        TeamCompareDialog dialog = new TeamCompareDialog(leagueTeams, teamStatMap);
+        TeamCompareDialog dialog = new TeamCompareDialog(leagueTeams, teamStatMap, Integer.parseInt(selectedLeague.getCurrent_week()));
         dialog.pack();
         dialog.setVisible(true);
     }
