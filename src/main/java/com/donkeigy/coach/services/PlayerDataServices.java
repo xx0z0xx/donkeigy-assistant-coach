@@ -16,7 +16,12 @@ public class PlayerDataServices
 {
     TeamService teamService;
 
-    public void getPositionWeeklyAvg(String teamKey, int week)
+    public PlayerDataServices(TeamService teamService)
+    {
+        this.teamService = teamService;
+    }
+
+    public Map<String, BigDecimal>  getPositionWeeklyAvg(String teamKey, int week)
     {
         List<RosterStats> weeklyTeamRosterPoints = teamService.getWeeklyTeamRosterPoints(teamKey, week);
         Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
@@ -36,20 +41,29 @@ public class PlayerDataServices
             }
             positionPointsList.add(positionPoints);
             positionDataPoints.put(position,positionPointsList);
+
         }
 
 
-
+        return calculateAvgPositionPts(positionDataPoints);
 
     }
 
     private  Map<String, BigDecimal>  calculateAvgPositionPts (Map<String, List<BigDecimal>> positionPointsListMap )
     {
+        Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
         for(String position : positionPointsListMap.keySet())
         {
-            positionPointsListMap.get(position); // Todo: To be continued .....
+            List<BigDecimal> positionPts = positionPointsListMap.get(position);
+            BigDecimal total = new BigDecimal(0);
+            for (BigDecimal playerPts : positionPts)
+            {
+                total = total.add(playerPts);
+            }
+            BigDecimal avg = total.divide(new BigDecimal(positionPts.size()));
+            result.put(position, avg);
 
         }
-        return null;
+        return result;
     }
 }

@@ -1,5 +1,7 @@
 package com.donkeigy.coach.ui.panels;
 
+import com.donkeigy.coach.services.PlayerDataServices;
+import com.donkeigy.coach.ui.dialogs.PositionCompareDialog;
 import com.donkeigy.coach.ui.dialogs.TeamCompareDialog;
 import com.donkeigy.coach.ui.models.LeagueTeamsTableModel;
 import com.yahoo.objects.league.League;
@@ -14,6 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +31,7 @@ public class LeaguePanel extends JPanel {
     private JPanel mainPanel;
     private JTable table1;
     private JButton leagueTeamCompareButton;
-    private JButton button2;
+    private JButton positionAvgCompareButton;
     private JButton button3;
     LeagueService leagueService;
     TeamService teamService;
@@ -75,6 +78,7 @@ public class LeaguePanel extends JPanel {
     private void addActionListeners() {
 
         leagueTeamCompareButton.setActionCommand("COMP_LEAGUE");
+        positionAvgCompareButton.setActionCommand("COMP_POS");
         leagueTeamCompareButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -82,6 +86,17 @@ public class LeaguePanel extends JPanel {
                 if (cmd.equals("COMP_LEAGUE")) //action for load button;
                 {
                     showLeagueCompareDialog();
+
+                }
+            }
+        });
+        positionAvgCompareButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cmd = e.getActionCommand();
+                if (cmd.equals("COMP_POS")) //action for load button;
+                {
+                    showPositionCompareDialog();
 
                 }
             }
@@ -97,6 +112,22 @@ public class LeaguePanel extends JPanel {
         }
 
         TeamCompareDialog dialog = new TeamCompareDialog(leagueTeams, teamStatMap, Integer.parseInt(selectedLeague.getCurrent_week()));
+        dialog.pack();
+        dialog.setVisible(true);
+    }
+    private void showPositionCompareDialog()
+    {
+        PlayerDataServices playerDataServices = new PlayerDataServices(teamService);
+
+        Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs = new HashMap<String, Map<String, BigDecimal>>();
+
+        for(Team team : leagueTeams)
+        {
+          positionWeeklyLeagueAvgs.put(team.getTeam_key(), playerDataServices.getPositionWeeklyAvg(team.getTeam_key(), 1)) ;
+
+        }
+       // playerDataServices.getPositionWeeklyAvg(userTeam.getTeam_key(), 1);
+        PositionCompareDialog dialog = new PositionCompareDialog(leagueTeams, positionWeeklyLeagueAvgs);
         dialog.pack();
         dialog.setVisible(true);
     }

@@ -71,12 +71,12 @@
               <text value="Compare All Teams"/>
             </properties>
           </component>
-          <component id="4b5fd" class="javax.swing.JButton" binding="button2" default-binding="true">
+          <component id="4b5fd" class="javax.swing.JButton" binding="positionAvgCompareButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Button"/>
+              <text value="Compare Position Performance"/>
             </properties>
           </component>
           <component id="58e0f" class="javax.swing.JButton" binding="button3" default-binding="true">
