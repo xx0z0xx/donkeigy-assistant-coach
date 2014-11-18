@@ -4,6 +4,7 @@ import com.yahoo.objects.team.RosterStats;
 import com.yahoo.services.TeamService;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class PlayerDataServices
             {
                 total = total.add(playerPts);
             }
-            BigDecimal avg = total.divide(new BigDecimal(positionPts.size()));
+            BigDecimal avg = total.divide(new BigDecimal(positionPts.size()),5, RoundingMode.HALF_UP);
             result.put(position, avg);
 
         }

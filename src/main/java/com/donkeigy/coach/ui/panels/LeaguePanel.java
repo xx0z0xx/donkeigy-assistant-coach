@@ -10,6 +10,8 @@ import com.yahoo.objects.team.TeamStandings;
 import com.yahoo.objects.team.TeamStat;
 import com.yahoo.services.LeagueService;
 import com.yahoo.services.TeamService;
+import com.yahoo.services.YahooServiceFactory;
+import com.yahoo.services.enums.ServiceType;
 import com.yahoo.utils.yql.YQLQueryUtil;
 
 import javax.swing.*;
@@ -53,10 +55,10 @@ public class LeaguePanel extends JPanel {
         populateLeagueTeamTable();
     }
 
-    public void init(YQLQueryUtil yqlQueryUtil)
+    public void init(YahooServiceFactory factory)
     {
-        leagueService = new LeagueService(yqlQueryUtil);
-        teamService = new TeamService(yqlQueryUtil);
+        leagueService = (LeagueService)factory.getService(ServiceType.LEAGUE);
+        teamService = (TeamService)factory.getService(ServiceType.TEAM);;
         leagueTeamsTableModel = new LeagueTeamsTableModel(leagueTeams, teamStandingsMap);
         table1.setModel(leagueTeamsTableModel);
         addActionListeners();

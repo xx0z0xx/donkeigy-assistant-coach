@@ -1,6 +1,7 @@
 package com.donkeigy.coach.app;
 
 import com.donkeigy.coach.ui.forms.MainForm;
+import com.yahoo.engine.YahooFantasyEngine;
 import com.yahoo.objects.api.YahooApiInfo;
 import com.yahoo.objects.league.League;
 import com.yahoo.objects.league.LeagueSettings;
@@ -19,6 +20,8 @@ import com.yahoo.objects.team.WeekRosterPlayers;
 import com.yahoo.services.LeagueService;
 import com.yahoo.services.PlayerService;
 import com.yahoo.services.TeamService;
+import com.yahoo.services.YahooServiceFactory;
+import com.yahoo.services.enums.ServiceType;
 import com.yahoo.utils.oauth.OAuthConnection;
 import com.yahoo.utils.yql.YQLQueryUtil;
 
@@ -43,25 +46,30 @@ public class AssistantCoach
                 new YahooApiInfo("dj0yJmk9MWNNeHFyMVZneFdFJmQ9WVdrOVNqVm9hSGQ2TXpZbWNHbzlNVEU0TURVM09UYzJNZy0tJnM9Y29uc3VtZXJzZWNyZXQmeD0wYQ--",
                         "9e1bb2700b79696770c9c931b182bf12260eb4e6");
 
-        OAuthConnection oAuthConn =  new OAuthConnection(info);
+        YahooFantasyEngine engine = new YahooFantasyEngine(info);
+        OAuthConnection oAuthConn = YahooFantasyEngine.getoAuthConn();
+        YahooServiceFactory factory = YahooFantasyEngine.getServiceFactory();
         String requestUrl = oAuthConn.retrieveAuthorizationUrl();
 
         try
         {
-            URI uri = new java.net.URI(requestUrl);
-            Desktop desktop = Desktop.getDesktop();
-            desktop.browse(uri);
-
-            System.out.println("Please type in verifier code:");
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            String verifier =  br.readLine();
-            if(oAuthConn.retrieveAccessToken(verifier))
+            if(!oAuthConn.connect())
             {
-                YQLQueryUtil yqlQueryUtil = new YQLQueryUtil(oAuthConn, info);
+                URI uri = new java.net.URI(requestUrl);
+                Desktop desktop = Desktop.getDesktop();
+                desktop.browse(uri);
 
-                LeagueService gameService = new LeagueService(yqlQueryUtil);
-                TeamService teamService = new TeamService(yqlQueryUtil);
-                PlayerService playerService = new PlayerService(yqlQueryUtil);
+                System.out.println("Please type in verifier code:");
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                String verifier = br.readLine();
+                oAuthConn.retrieveAccessToken(verifier);
+            }
+            if(oAuthConn.isAuthorized())
+            {
+
+                LeagueService gameService = (LeagueService)factory.getService(ServiceType.LEAGUE);
+                TeamService teamService = (TeamService)factory.getService(ServiceType.TEAM);
+                PlayerService playerService = (PlayerService)factory.getService(ServiceType.PLAYER);
 
                 java.util.List<League> leagues = gameService.getUserLeagues("nfl");
                 for(League league : leagues)

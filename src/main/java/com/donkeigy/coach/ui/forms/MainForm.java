@@ -2,7 +2,9 @@ package com.donkeigy.coach.ui.forms;
 
 import com.donkeigy.coach.ui.dialogs.YahooOauthDialog;
 import com.donkeigy.coach.ui.panels.LeaguePanel;
+import com.yahoo.engine.YahooFantasyEngine;
 import com.yahoo.objects.api.YahooApiInfo;
+import com.yahoo.services.YahooServiceFactory;
 import com.yahoo.utils.oauth.OAuthConnection;
 import com.yahoo.utils.yql.YQLQueryUtil;
 
@@ -25,7 +27,7 @@ public class MainForm extends JFrame {
 
 
     private OAuthConnection conn;
-    private YQLQueryUtil yqlQueryUtil;
+   // private YQLQueryUtil yqlQueryUtil;
 
     public MainForm(String title) {
         super(title);
@@ -34,10 +36,11 @@ public class MainForm extends JFrame {
                 new YahooApiInfo("dj0yJmk9MWNNeHFyMVZneFdFJmQ9WVdrOVNqVm9hSGQ2TXpZbWNHbzlNVEU0TURVM09UYzJNZy0tJnM9Y29uc3VtZXJzZWNyZXQmeD0wYQ--",
                         "9e1bb2700b79696770c9c931b182bf12260eb4e6");
 
-        conn = new OAuthConnection(info);
-        yqlQueryUtil = new YQLQueryUtil(conn, info);
+        YahooFantasyEngine engine = new YahooFantasyEngine(info);
+        conn = YahooFantasyEngine.getoAuthConn();
+        YahooServiceFactory factory = YahooFantasyEngine.getServiceFactory();
 
-        ((LeaguePanel) leaguePanel).init(yqlQueryUtil);
+        ((LeaguePanel) leaguePanel).init(factory);
 
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,11 +67,15 @@ public class MainForm extends JFrame {
                 if (cmd.equals("LOAD_YAHOO")) //action for load button;
                 {
 
-                    if (!conn.isAuthorized()) {
+                    if (!conn.connect())
+                    {
                         showYahooOauthDialog();
 
-                    } else {
+                    }
+                    else
+                    {
                         // showYahooLoadDialog();
+                        populateOAuthInfo();
                     }
                 }
             }
