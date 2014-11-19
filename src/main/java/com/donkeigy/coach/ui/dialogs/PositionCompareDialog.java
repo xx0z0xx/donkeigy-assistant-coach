@@ -1,5 +1,6 @@
 package com.donkeigy.coach.ui.dialogs;
 
+import com.donkeigy.coach.services.PlayerDataServices;
 import com.donkeigy.coach.ui.panels.PositionComparePanel;
 import com.yahoo.objects.team.Team;
 
@@ -14,12 +15,13 @@ public class PositionCompareDialog extends JDialog {
     private JButton buttonOK;
     private JButton buttonCancel;
     private PositionComparePanel positionComparePanel1;
+    private PlayerDataServices playerDataServices;
 
-    public PositionCompareDialog(List<Team> teams, Map<String, Map<String, BigDecimal>> positionWeeklyAvgs) {
+    public PositionCompareDialog(List<Team> teams ,PlayerDataServices playerDataServices) {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        positionComparePanel1.init(teams, positionWeeklyAvgs);
+        positionComparePanel1.init(teams, playerDataServices);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

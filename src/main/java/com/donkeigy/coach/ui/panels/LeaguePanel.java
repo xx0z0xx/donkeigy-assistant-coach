@@ -49,6 +49,7 @@ public class LeaguePanel extends JPanel {
 
     public void populateLeagueComboBox() {
         List<League> leagues = leagueService.getUserLeagues("nfl");
+        leagueComboBox.removeAllItems();
         for (League league : leagues) {
             leagueComboBox.addItem(league);
         }
@@ -58,7 +59,7 @@ public class LeaguePanel extends JPanel {
     public void init(YahooServiceFactory factory)
     {
         leagueService = (LeagueService)factory.getService(ServiceType.LEAGUE);
-        teamService = (TeamService)factory.getService(ServiceType.TEAM);;
+        teamService = (TeamService)factory.getService(ServiceType.TEAM);
         leagueTeamsTableModel = new LeagueTeamsTableModel(leagueTeams, teamStandingsMap);
         table1.setModel(leagueTeamsTableModel);
         addActionListeners();
@@ -121,15 +122,9 @@ public class LeaguePanel extends JPanel {
     {
         PlayerDataServices playerDataServices = new PlayerDataServices(teamService);
 
-        Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs = new HashMap<String, Map<String, BigDecimal>>();
 
-        for(Team team : leagueTeams)
-        {
-          positionWeeklyLeagueAvgs.put(team.getTeam_key(), playerDataServices.getPositionWeeklyAvg(team.getTeam_key(), 1)) ;
-
-        }
        // playerDataServices.getPositionWeeklyAvg(userTeam.getTeam_key(), 1);
-        PositionCompareDialog dialog = new PositionCompareDialog(leagueTeams, positionWeeklyLeagueAvgs);
+        PositionCompareDialog dialog = new PositionCompareDialog(leagueTeams, playerDataServices);
         dialog.pack();
         dialog.setVisible(true);
     }
