@@ -121,10 +121,10 @@ public class LeaguePanel extends JPanel {
     private void showPositionCompareDialog()
     {
         PlayerDataServices playerDataServices = new PlayerDataServices(teamService);
-
+        int currentWeek = (new BigDecimal(selectedLeague.getCurrent_week())).intValue();
 
        // playerDataServices.getPositionWeeklyAvg(userTeam.getTeam_key(), 1);
-        PositionCompareDialog dialog = new PositionCompareDialog(leagueTeams, playerDataServices);
+        PositionCompareDialog dialog = new PositionCompareDialog(leagueTeams, playerDataServices,currentWeek);
         dialog.pack();
         dialog.setVisible(true);
     }

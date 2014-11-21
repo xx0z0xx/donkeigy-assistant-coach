@@ -17,11 +17,11 @@ public class PositionCompareDialog extends JDialog {
     private PositionComparePanel positionComparePanel1;
     private PlayerDataServices playerDataServices;
 
-    public PositionCompareDialog(List<Team> teams ,PlayerDataServices playerDataServices) {
+    public PositionCompareDialog(List<Team> teams ,PlayerDataServices playerDataServices, int currentWeek) {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        positionComparePanel1.init(teams, playerDataServices);
+        positionComparePanel1.init(teams, playerDataServices, currentWeek);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

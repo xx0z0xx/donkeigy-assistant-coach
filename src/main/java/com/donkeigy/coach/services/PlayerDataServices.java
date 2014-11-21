@@ -1,14 +1,13 @@
 package com.donkeigy.coach.services;
 
+import com.donkeigy.coach.objects.TeamStat;
 import com.yahoo.objects.team.RosterStats;
+import com.yahoo.objects.team.Team;
 import com.yahoo.services.TeamService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by cedric on 11/4/14.
@@ -67,4 +66,54 @@ public class PlayerDataServices
         }
         return result;
     }
+
+    public Map<String, Integer> getPlayerWeeklyPositionRanking(List<Team> leagueTeams,  Team userTeam, Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs)
+    {
+        Map<String, Integer> result = new HashMap<String, Integer>();
+
+        Team tempTeam =  leagueTeams.get(0);
+        Map<String, BigDecimal> positionWeeklyAvgs = positionWeeklyLeagueAvgs.get(tempTeam.getTeam_key());
+        Map<String, List<TeamStat>> positionPointsMap =  new HashMap<String, List<TeamStat>>();
+        Object[] positionsStringArr =  positionWeeklyAvgs.keySet().toArray();
+
+        for(Team team : leagueTeams)
+        {
+           positionWeeklyAvgs = positionWeeklyLeagueAvgs.get(team.getTeam_key());
+           for(Object positionStrObj : positionsStringArr)
+           {
+              String position = (String)positionStrObj;
+              BigDecimal avg = positionWeeklyAvgs.get(position);
+              TeamStat tempStat = new TeamStat(team.getTeam_key(), avg);
+              List<TeamStat> positionTeamStatList = positionPointsMap.get(position);
+               if(positionTeamStatList == null)
+               {
+                   positionTeamStatList = new LinkedList<TeamStat>();
+               }
+               positionTeamStatList.add(tempStat);
+               positionPointsMap.put(position, positionTeamStatList);
+           }
+        }
+
+        for(Object positionStrObj : positionsStringArr)
+        {
+            String position = (String)positionStrObj;
+            List<TeamStat> positionTeamStatList = positionPointsMap.get(position);
+            TeamStat[] positionTeamStatArr =  positionTeamStatList.toArray(new TeamStat[positionTeamStatList.size()]);
+            Arrays.sort(positionTeamStatArr,Collections.reverseOrder());
+
+            for(int i=0; i<= positionTeamStatArr.length ;i++)
+            {
+                if(userTeam.getTeam_key().equals(positionTeamStatArr[i].getTeamKey()))
+                {
+                    result.put(position,new Integer(i+1));
+                    break;
+                }
+
+            }
+        }
+        return  result;
+    }
+
+
+
 }

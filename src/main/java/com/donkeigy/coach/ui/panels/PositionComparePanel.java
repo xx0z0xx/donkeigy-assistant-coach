@@ -2,9 +2,8 @@ package com.donkeigy.coach.ui.panels;
 
 import com.donkeigy.coach.services.PlayerDataServices;
 import com.donkeigy.coach.ui.models.PositionCompareTableModel;
+import com.donkeigy.coach.ui.models.PositionRankingsTableModel;
 import com.yahoo.objects.team.Team;
-import com.yahoo.objects.team.TeamPoints;
-import com.yahoo.objects.team.TeamStat;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -15,9 +14,10 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +30,17 @@ public class PositionComparePanel {
     private JPanel mainPanel;
     private ChartPanel chartPanel1;
     private JTabbedPane tabbedPane1;
-    private JTable table1;
+    private JTable positionPointsTable;
     private JComboBox comboBox1;
-    private JButton button1;
+    private JButton loadWeekButton;
+    private JTable positionRankingTable;
     private PositionCompareTableModel positionCompareTableModel;
+    PositionRankingsTableModel positionRankingTableModel;
     private PlayerDataServices playerDataServices;
     private List<Team> leagueTeams;
+    private Team userTeam;
+    private int currentWeek;
+    private int selectedWeek;
     //Map<String, BigDecimal> positionWeeklyAvgs;
 
     public PositionComparePanel()
@@ -61,18 +66,35 @@ public class PositionComparePanel {
         return dataset;
     }
 
-    public void init (List<Team> teams, PlayerDataServices playerDataServices)
+    public void init (List<Team> teams, PlayerDataServices playerDataServices, int currentWeek)
     {
         this.playerDataServices = playerDataServices;
         this.leagueTeams = teams;
+        this.currentWeek = currentWeek;
+        this.selectedWeek = currentWeek-1;
+        initComboBox();
+        initUserTeam();
         Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs = getPositionWeeklyAvgs();
         initCharts(teams, positionWeeklyLeagueAvgs);
-        initTable(teams, positionWeeklyLeagueAvgs);
-        initComboBox();
+        initTables(teams, positionWeeklyLeagueAvgs);
+
+
+        addActionListeners();
 
 
 
+    }
 
+    private void initUserTeam()
+    {
+        for (Team team : leagueTeams)
+        {
+            if(team.getIs_owned_by_current_login() != null && team.getIs_owned_by_current_login().equals("1"))
+            {
+                this.userTeam = team;
+                break;
+            }
+        }
     }
 
     private Map<String, Map<String, BigDecimal>> getPositionWeeklyAvgs()
@@ -81,11 +103,13 @@ public class PositionComparePanel {
 
         for(Team team : leagueTeams)
         {
-            positionWeeklyLeagueAvgs.put(team.getTeam_key(), playerDataServices.getPositionWeeklyAvg(team.getTeam_key(), 1)) ;
+            positionWeeklyLeagueAvgs.put(team.getTeam_key(), playerDataServices.getPositionWeeklyAvg(team.getTeam_key(), selectedWeek)) ;
 
         }
         return positionWeeklyLeagueAvgs;
     }
+
+
 
     private void initCharts(List<Team> teams,  Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs)
     {
@@ -108,18 +132,62 @@ public class PositionComparePanel {
         rangeAxis.setAutoRange(true);
     }
 
-    private void initTable(List<Team> teams,  Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs)
+    private void initTables(List<Team> teams,  Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs)
     {
         positionCompareTableModel = new PositionCompareTableModel(teams, positionWeeklyLeagueAvgs);
-        table1.setModel(positionCompareTableModel);
+        positionPointsTable.setModel(positionCompareTableModel);
+        Map<String, Integer> playerRanks = playerDataServices.getPlayerWeeklyPositionRanking(leagueTeams, userTeam, positionWeeklyLeagueAvgs);
+        positionRankingTableModel = new PositionRankingsTableModel(playerRanks);
+        positionRankingTable.setModel(positionRankingTableModel);
     }
     private void initComboBox()
     {
         comboBox1.removeAllItems();
-        for (int i = 1 ; i <= 17; i++)
+        for (int i = currentWeek - 1 ; i > 0; i--)
         {
-            comboBox1.addItem("Week " + i);
+            comboBox1.addItem(new ComboBoxWeek(i));
         }
+
+    }
+    private void addActionListeners()
+    {
+        loadWeekButton.setActionCommand("LOAD_WEEK");
+        loadWeekButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cmd = e.getActionCommand();
+                if (cmd.equals("LOAD_WEEK")) //action for load button;
+                {
+                    ComboBoxWeek comboBoxWeek = (ComboBoxWeek)comboBox1.getSelectedItem();
+                    selectedWeek = comboBoxWeek.getWeek();
+                    Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs = getPositionWeeklyAvgs();
+                    initCharts(leagueTeams, positionWeeklyLeagueAvgs);
+                    initTables(leagueTeams, positionWeeklyLeagueAvgs);
+                }
+            }
+        });
     }
 
+    private class ComboBoxWeek
+    {
+        int week;
+
+        private ComboBoxWeek(int week)
+        {
+            this.week = week;
+        }
+
+        public int getWeek() {
+            return week;
+        }
+
+        public void setWeek(int week) {
+            this.week = week;
+        }
+
+        @Override
+        public String toString() {
+            return "Week "+ week;
+        }
+    }
 }
