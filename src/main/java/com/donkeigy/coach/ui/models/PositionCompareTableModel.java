@@ -1,5 +1,7 @@
 package com.donkeigy.coach.ui.models;
 
+import com.yahoo.objects.league.LeagueRosterPosition;
+import com.yahoo.objects.league.LeagueRosterPositionList;
 import com.yahoo.objects.team.Team;
 
 import javax.swing.table.AbstractTableModel;
@@ -15,11 +17,13 @@ public class PositionCompareTableModel extends AbstractTableModel
 {
     private List<Team> teams;
     private Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs;
+    private LeagueRosterPositionList leagueRosterPositionList;
 
-    public PositionCompareTableModel(List<Team> teams, Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs)
+    public PositionCompareTableModel(List<Team> teams, Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs, LeagueRosterPositionList leagueRosterPositionList)
     {
         this.teams = teams;
         this.positionWeeklyLeagueAvgs = positionWeeklyLeagueAvgs;
+        this.leagueRosterPositionList = leagueRosterPositionList;
     }
 
 
@@ -32,9 +36,7 @@ public class PositionCompareTableModel extends AbstractTableModel
 
     @Override
     public int getColumnCount() {
-        Object[] teamsArr = positionWeeklyLeagueAvgs.keySet().toArray();
-        String teamKey = (String)teamsArr[0];
-        return positionWeeklyLeagueAvgs.get(teamKey).size() + 1;
+        return  leagueRosterPositionList.getRoster_position().size()+ 1;
     }
 
     @Override
@@ -47,9 +49,14 @@ public class PositionCompareTableModel extends AbstractTableModel
         else
         {
             Map<String, BigDecimal> positionWeeklyAvg = positionWeeklyLeagueAvgs.get(team.getTeam_key());
-            Object[] possArr = positionWeeklyAvg.keySet().toArray();
-            String pos = (String) possArr[columnIndex-1];
-            return positionWeeklyAvg.get(pos);
+            LeagueRosterPosition leaugePos = leagueRosterPositionList.getRoster_position().get(columnIndex - 1);
+            String pos = leaugePos.getPosition();
+            BigDecimal result = positionWeeklyAvg.get(pos);
+            if (result == null)
+            {
+                result = new BigDecimal(0);
+            }
+            return result;
         }
 
 
@@ -64,11 +71,10 @@ public class PositionCompareTableModel extends AbstractTableModel
         }
         else
         {
-            Object[] teamsArr = positionWeeklyLeagueAvgs.keySet().toArray();
-            String teamKey = (String)teamsArr[0];
-            Map<String, BigDecimal> positionWeeklyAvg = positionWeeklyLeagueAvgs.get(teamKey);
-            Object[] possArr = positionWeeklyAvg.keySet().toArray();
-            return (String) possArr[column-1];
+
+            LeagueRosterPosition leaugePos = leagueRosterPositionList.getRoster_position().get(column - 1);
+            String pos = leaugePos.getPosition();
+            return pos;
         }
 
     }

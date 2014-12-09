@@ -3,6 +3,7 @@ package com.donkeigy.coach.ui.panels;
 import com.donkeigy.coach.services.PlayerDataServices;
 import com.donkeigy.coach.ui.models.PositionCompareTableModel;
 import com.donkeigy.coach.ui.models.PositionRankingsTableModel;
+import com.yahoo.objects.league.LeagueRosterPositionList;
 import com.yahoo.objects.team.Team;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -38,6 +39,7 @@ public class PositionComparePanel {
     PositionRankingsTableModel positionRankingTableModel;
     private PlayerDataServices playerDataServices;
     private List<Team> leagueTeams;
+    private LeagueRosterPositionList leagueRosterPositionList;
     private Team userTeam;
     private int currentWeek;
     private int selectedWeek;
@@ -66,17 +68,18 @@ public class PositionComparePanel {
         return dataset;
     }
 
-    public void init (List<Team> teams, PlayerDataServices playerDataServices, int currentWeek)
+    public void init (LeagueRosterPositionList leagueRosterPositionList, List<Team> teams, PlayerDataServices playerDataServices, int currentWeek)
     {
         this.playerDataServices = playerDataServices;
         this.leagueTeams = teams;
         this.currentWeek = currentWeek;
         this.selectedWeek = currentWeek-1;
+        this.leagueRosterPositionList = leagueRosterPositionList;
         initComboBox();
         initUserTeam();
         Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs = getPositionWeeklyAvgs();
-        initCharts(teams, positionWeeklyLeagueAvgs);
-        initTables(teams, positionWeeklyLeagueAvgs);
+        initCharts(positionWeeklyLeagueAvgs);
+        initTables(positionWeeklyLeagueAvgs);
 
 
         addActionListeners();
@@ -111,13 +114,13 @@ public class PositionComparePanel {
 
 
 
-    private void initCharts(List<Team> teams,  Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs)
+    private void initCharts(Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs)
     {
         chart = ChartFactory.createBarChart(
                 "Player Avg Comparison", // chart title
                 "Team", // domain axis label
                 "Points", // range axis label
-                createTeamCompareDataSet(teams, positionWeeklyLeagueAvgs), // data
+                createTeamCompareDataSet(leagueTeams, positionWeeklyLeagueAvgs), // data
                 PlotOrientation.VERTICAL, // orientation
                 true, // include legend
                 true, // tooltips
@@ -132,9 +135,9 @@ public class PositionComparePanel {
         rangeAxis.setAutoRange(true);
     }
 
-    private void initTables(List<Team> teams,  Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs)
+    private void initTables(Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs )
     {
-        positionCompareTableModel = new PositionCompareTableModel(teams, positionWeeklyLeagueAvgs);
+        positionCompareTableModel = new PositionCompareTableModel(leagueTeams, positionWeeklyLeagueAvgs, leagueRosterPositionList);
         positionPointsTable.setModel(positionCompareTableModel);
         Map<String, Integer> playerRanks = playerDataServices.getPlayerWeeklyPositionRanking(leagueTeams, userTeam, positionWeeklyLeagueAvgs);
         positionRankingTableModel = new PositionRankingsTableModel(playerRanks);
@@ -161,8 +164,8 @@ public class PositionComparePanel {
                     ComboBoxWeek comboBoxWeek = (ComboBoxWeek)comboBox1.getSelectedItem();
                     selectedWeek = comboBoxWeek.getWeek();
                     Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs = getPositionWeeklyAvgs();
-                    initCharts(leagueTeams, positionWeeklyLeagueAvgs);
-                    initTables(leagueTeams, positionWeeklyLeagueAvgs);
+                    initCharts(positionWeeklyLeagueAvgs);
+                    initTables(positionWeeklyLeagueAvgs);
                 }
             }
         });

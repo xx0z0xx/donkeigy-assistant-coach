@@ -8,11 +8,14 @@ import java.math.BigDecimal;
 public class TeamStat implements Comparable<TeamStat>
 {
     String teamKey;
-    BigDecimal stat;
+    BigDecimal stat = new BigDecimal(0);
 
     public TeamStat(String teamKey, BigDecimal stat) {
         this.teamKey = teamKey;
-        this.stat = stat;
+        if(stat != null)
+        {
+            this.stat = stat;
+        }
     }
 
     public String getTeamKey() {
@@ -24,6 +27,7 @@ public class TeamStat implements Comparable<TeamStat>
     }
 
     public BigDecimal getStat() {
+
         return stat;
     }
 

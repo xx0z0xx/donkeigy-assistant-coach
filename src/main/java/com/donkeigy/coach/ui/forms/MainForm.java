@@ -6,10 +6,8 @@ import com.yahoo.engine.YahooFantasyEngine;
 import com.yahoo.objects.api.YahooApiInfo;
 import com.yahoo.services.YahooServiceFactory;
 import com.yahoo.utils.oauth.OAuthConnection;
-import com.yahoo.utils.yql.YQLQueryUtil;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -88,8 +86,9 @@ public class MainForm extends JFrame {
         dialog.setVisible(true);
     }
 
-    public void populateOAuthInfo() {
-        ((LeaguePanel) leaguePanel).populateLeagueComboBox();
+    public void populateOAuthInfo()
+    {
+        ((LeaguePanel) leaguePanel).populateData();
     }
 
 }

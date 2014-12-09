@@ -2,6 +2,7 @@ package com.donkeigy.coach.ui.dialogs;
 
 import com.donkeigy.coach.services.PlayerDataServices;
 import com.donkeigy.coach.ui.panels.PositionComparePanel;
+import com.yahoo.objects.league.LeagueRosterPositionList;
 import com.yahoo.objects.team.Team;
 
 import javax.swing.*;
@@ -17,11 +18,11 @@ public class PositionCompareDialog extends JDialog {
     private PositionComparePanel positionComparePanel1;
     private PlayerDataServices playerDataServices;
 
-    public PositionCompareDialog(List<Team> teams ,PlayerDataServices playerDataServices, int currentWeek) {
+    public PositionCompareDialog(LeagueRosterPositionList leagueRosterPositionList, List<Team> teams ,PlayerDataServices playerDataServices, int currentWeek) {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        positionComparePanel1.init(teams, playerDataServices, currentWeek);
+        positionComparePanel1.init(leagueRosterPositionList, teams, playerDataServices, currentWeek);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -63,7 +64,8 @@ public class PositionCompareDialog extends JDialog {
 
 
 
-    private void createUIComponents() {
+    private void createUIComponents()
+    {
         positionComparePanel1 = new PositionComparePanel();
     }
 }

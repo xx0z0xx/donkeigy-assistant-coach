@@ -5,6 +5,8 @@ import com.donkeigy.coach.ui.dialogs.PositionCompareDialog;
 import com.donkeigy.coach.ui.dialogs.TeamCompareDialog;
 import com.donkeigy.coach.ui.models.LeagueTeamsTableModel;
 import com.yahoo.objects.league.League;
+import com.yahoo.objects.league.LeagueRosterPositionList;
+import com.yahoo.objects.league.LeagueSettings;
 import com.yahoo.objects.team.Team;
 import com.yahoo.objects.team.TeamStandings;
 import com.yahoo.objects.team.TeamStat;
@@ -41,18 +43,28 @@ public class LeaguePanel extends JPanel {
     private League selectedLeague;
     Map<String, TeamStandings> teamStandingsMap = new HashMap<String, TeamStandings>();
     List<Team> leagueTeams = new LinkedList<Team>();
+    List<League> leagues = new LinkedList<League>();
 
     public LeaguePanel()
     {
 
     }
 
-    public void populateLeagueComboBox() {
-        List<League> leagues = leagueService.getUserLeagues("nfl");
-        leagueComboBox.removeAllItems();
-        for (League league : leagues) {
-            leagueComboBox.addItem(league);
+    private void initLeagueTeams()
+    {
+        if(leagues.isEmpty())
+        {
+            leagues = leagueService.getUserLeagues("nfl");
+            for (League league : leagues) {
+                leagueComboBox.addItem(league);
+            }
         }
+       
+    }
+    public void populateData()
+    {
+       
+        initLeagueTeams();
         populateLeagueTeamTable();
     }
 
@@ -65,7 +77,7 @@ public class LeaguePanel extends JPanel {
         addActionListeners();
     }
 
-    private void populateLeagueTeamTable()
+    public void populateLeagueTeamTable()
     {
         selectedLeague = (League)leagueComboBox.getSelectedItem();
         List<Team> selectedLeagueTeams = teamService.getLeagueTeams(selectedLeague.getLeague_key());
@@ -122,9 +134,10 @@ public class LeaguePanel extends JPanel {
     {
         PlayerDataServices playerDataServices = new PlayerDataServices(teamService);
         int currentWeek = (new BigDecimal(selectedLeague.getCurrent_week())).intValue();
-
+        LeagueSettings leagueSettings = leagueService.getLeagueSettings(selectedLeague.getLeague_key());
+        LeagueRosterPositionList leagueRosterPositionList = leagueSettings.getRoster_positions();
        // playerDataServices.getPositionWeeklyAvg(userTeam.getTeam_key(), 1);
-        PositionCompareDialog dialog = new PositionCompareDialog(leagueTeams, playerDataServices,currentWeek);
+        PositionCompareDialog dialog = new PositionCompareDialog(leagueRosterPositionList, leagueTeams, playerDataServices,currentWeek);
         dialog.pack();
         dialog.setVisible(true);
     }
