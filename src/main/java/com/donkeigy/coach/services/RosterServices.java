@@ -1,5 +1,6 @@
 package com.donkeigy.coach.services;
 
+import com.donkeigy.coach.utils.PlayerUtil;
 import com.yahoo.objects.league.LeagueRosterPosition;
 import com.yahoo.objects.league.LeagueRosterPositionList;
 import com.yahoo.objects.league.LeagueSettings;
@@ -8,6 +9,7 @@ import com.yahoo.services.LeagueService;
 import com.yahoo.services.TeamService;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,18 +37,31 @@ public class RosterServices
         return result;
     }
 
-    public  Map<String, String[]> generateBestTeamRoster(String leagueKey, String teamKey, int week)
+    public  Map<String, String[]> generateBestTeamRosterforWeek(String leagueKey, String teamKey, int week)
     {
         LeagueSettings leagueSettings = leagueService.getLeagueSettings(leagueKey);
         Map<String, String[]> result = generateEmptyLeagueRoster(leagueSettings.getRoster_positions());
         List<RosterStats> weeklyTeamRosterPoints = teamService.getWeeklyTeamRosterPoints(teamKey, week);
-        for(RosterStats rosterStats : weeklyTeamRosterPoints)
+        result = populateRosterWithBestPlayers(result, weeklyTeamRosterPoints);
+        return result;
+    }
+
+    public Map<String, String[]> populateRosterWithBestPlayers (Map<String, String[]> roster, List<RosterStats> players)
+    {
+        Map<String, String[]> result = roster;
+        Object[] rosterPositionObjArr = result.keySet().toArray();
+        List <RosterStats> playerListCpy = new LinkedList<RosterStats>();
+        playerListCpy.addAll(players);
+        for(Object rosterPositionObj : rosterPositionObjArr)
         {
-           List<String> eligiblePosList = rosterStats.getEligiblePositions();
-           for(String eligiblePos : eligiblePosList)
-           {
-               //Todo: Algorithm for how to pick the best player in a roster
-           }
+            String rosterPosition = (String)rosterPositionObj;
+            String[] rosterPositionSlots = result.get(rosterPosition);
+            for(int i = 0 ; i< rosterPositionSlots.length; i++)
+            {
+                RosterStats bestPositionPlayerPossible = PlayerUtil.getBestPositionPlayerPossible(rosterPosition, playerListCpy);
+                rosterPositionSlots[i] = bestPositionPlayerPossible.getPlayerKey();
+                playerListCpy.remove(bestPositionPlayerPossible);
+            }
         }
         return result;
     }
