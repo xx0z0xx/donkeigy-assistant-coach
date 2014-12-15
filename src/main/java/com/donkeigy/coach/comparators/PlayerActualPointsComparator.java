@@ -15,7 +15,7 @@ public class PlayerActualPointsComparator implements Comparator<RosterStats>
     public int compare(RosterStats o1, RosterStats o2) {
         BigDecimal playerPoints1 = o1.getPlayerPoints();
         BigDecimal playerPoints2 = o2.getPlayerPoints();
-        return playerPoints1.compareTo(playerPoints2);
+        return playerPoints2.compareTo(playerPoints1);
     }
 
 

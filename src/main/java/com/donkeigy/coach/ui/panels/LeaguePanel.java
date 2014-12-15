@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class LeaguePanel extends JPanel {
 
-    private JComboBox leagueComboBox;
+
     private JPanel mainPanel;
     private JTable table1;
     private JButton leagueTeamCompareButton;
@@ -43,29 +43,17 @@ public class LeaguePanel extends JPanel {
     private League selectedLeague;
     Map<String, TeamStandings> teamStandingsMap = new HashMap<String, TeamStandings>();
     List<Team> leagueTeams = new LinkedList<Team>();
-    List<League> leagues = new LinkedList<League>();
+
 
     public LeaguePanel()
     {
 
     }
 
-    private void initLeagueTeams()
+
+    public void populateData(League league)
     {
-        if(leagues.isEmpty())
-        {
-            leagues = leagueService.getUserLeagues("nfl");
-            for (League league : leagues) {
-                leagueComboBox.addItem(league);
-            }
-        }
-       
-    }
-    public void populateData()
-    {
-       
-        initLeagueTeams();
-        populateLeagueTeamTable();
+        populateLeagueTeamTable(league);
     }
 
     public void init(YahooServiceFactory factory)
@@ -77,9 +65,9 @@ public class LeaguePanel extends JPanel {
         addActionListeners();
     }
 
-    public void populateLeagueTeamTable()
+    public void populateLeagueTeamTable(League league)
     {
-        selectedLeague = (League)leagueComboBox.getSelectedItem();
+        selectedLeague = league;
         List<Team> selectedLeagueTeams = teamService.getLeagueTeams(selectedLeague.getLeague_key());
         Map<String, TeamStandings> selectedStandingsMap = leagueService.getLeagueStandings(selectedLeague.getLeague_key());
         leagueTeams.clear();

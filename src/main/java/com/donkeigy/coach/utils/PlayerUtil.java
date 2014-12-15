@@ -1,11 +1,10 @@
 package com.donkeigy.coach.utils;
 
 import com.donkeigy.coach.comparators.PlayerActualPointsComparator;
+import com.yahoo.objects.players.Player;
 import com.yahoo.objects.team.RosterStats;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by cedric on 12/11/14.
@@ -41,6 +40,16 @@ public class PlayerUtil
 
         }
 
+        return result;
+    }
+
+    public static Map<String, Player> generatePlayerKeyToPlayerMap(List<Player> players)
+    {
+        Map<String, Player> result = new HashMap<String, Player>();
+        for(Player player : players)
+        {
+            result.put(player.getPlayer_key(), player);
+        }
         return result;
     }
 }

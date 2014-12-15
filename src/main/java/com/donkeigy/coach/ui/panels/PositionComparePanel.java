@@ -1,8 +1,10 @@
 package com.donkeigy.coach.ui.panels;
 
+import com.donkeigy.coach.objects.ui.ComboBoxWeek;
 import com.donkeigy.coach.services.PlayerDataServices;
 import com.donkeigy.coach.ui.models.PositionCompareTableModel;
 import com.donkeigy.coach.ui.models.PositionRankingsTableModel;
+import com.donkeigy.coach.utils.LeagueUtil;
 import com.yahoo.objects.league.LeagueRosterPositionList;
 import com.yahoo.objects.team.Team;
 import org.jfree.chart.ChartFactory;
@@ -75,8 +77,9 @@ public class PositionComparePanel {
         this.currentWeek = currentWeek;
         this.selectedWeek = currentWeek-1;
         this.leagueRosterPositionList = leagueRosterPositionList;
+        this.userTeam = LeagueUtil.retrieveUserTeam(teams);
         initComboBox();
-        initUserTeam();
+
         Map<String, Map<String, BigDecimal>> positionWeeklyLeagueAvgs = getPositionWeeklyAvgs();
         initCharts(positionWeeklyLeagueAvgs);
         initTables(positionWeeklyLeagueAvgs);
@@ -88,17 +91,7 @@ public class PositionComparePanel {
 
     }
 
-    private void initUserTeam()
-    {
-        for (Team team : leagueTeams)
-        {
-            if(team.getIs_owned_by_current_login() != null && team.getIs_owned_by_current_login().equals("1"))
-            {
-                this.userTeam = team;
-                break;
-            }
-        }
-    }
+
 
     private Map<String, Map<String, BigDecimal>> getPositionWeeklyAvgs()
     {
@@ -171,26 +164,5 @@ public class PositionComparePanel {
         });
     }
 
-    private class ComboBoxWeek
-    {
-        int week;
 
-        private ComboBoxWeek(int week)
-        {
-            this.week = week;
-        }
-
-        public int getWeek() {
-            return week;
-        }
-
-        public void setWeek(int week) {
-            this.week = week;
-        }
-
-        @Override
-        public String toString() {
-            return "Week "+ week;
-        }
-    }
 }
