@@ -90,7 +90,7 @@ public class AssistantCoach
 
                 Team demoTeam = teamList.get(0);
 
-                Roster demoRoster = teamService.getTeamRoster(demoTeam.getTeam_key());
+                Roster demoRoster = teamService.getTeamRoster(demoTeam.getTeam_key(), 1);
                 WeekRosterPlayers demoRosterPlayers = demoRoster.getPlayers();
                 java.util.List<Player> demoRosterPlayersList = demoRosterPlayers.getPlayer();
                 System.out.println("Roster of "+ demoTeam.getName());
